@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f7f6f2" />
+    <meta
+      name="description"
+      content="Thoughtful things for slower mornings and softer landings. Discover home goods and everyday objects at Sipra Mart."
+    />
+    <title>Sipra Mart — Make room for slow</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <div class="announcement">
+      A little something for your first order <span>—</span> use <strong>SIPRA10</strong> for 10% off
+    </div>
+
+    <header class="site-header">
+      <a class="wordmark" href="#" aria-label="Sipra Mart home">sipra<span class="wordmark-second"> mart</span><span class="wordmark-mark">®</span></a>
+      <nav class="main-nav" aria-label="Main navigation">
+        <a href="#shop">Shop all</a>
+        <a href="#shop" data-nav-category="Home">Home</a>
+        <a href="#shop" data-nav-category="Objects">Objects</a>
+        <a href="#story">Our story</a>
+      </nav>
+      <div class="header-actions">
+        <button class="icon-button search-toggle" type="button" aria-label="Search products">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"></circle><path d="m16 16 5 5"></path></svg>
+        </button>
+        <button class="cart-button" type="button" aria-label="Open shopping bag">
+          Bag <span class="cart-count" aria-live="polite">0</span>
+        </button>
+        <button class="menu-toggle icon-button" type="button" aria-label="Open menu" aria-expanded="false">
+          <span></span><span></span>
+        </button>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero" aria-labelledby="hero-title">
+        <img
+          class="hero-image"
+          src="https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&w=2200&q=85"
+          alt="Sunlit, warm-toned living room with thoughtful, natural details"
+        />
+        <div class="hero-shade"></div>
+        <div class="hero-copy">
+          <p class="eyebrow light-eyebrow"><span class="eyebrow-line"></span> A softer kind of everyday</p>
+          <h1 id="hero-title">Make room<br />for <em>slow.</em></h1>
+          <p>Thoughtful things for slower mornings<br class="desktop-break" /> and softer landings.</p>
+          <a class="button button-light" href="#shop">Find your everyday <span aria-hidden="true">↗</span></a>
+        </div>
+        <div class="hero-note"><span>01</span> / THE SIPRA EDIT</div>
+        <div class="hero-side-note">GOOD THINGS, TAKEN SLOWLY</div>
+      </section>
+
+      <section class="intro-strip" id="story">
+        <p>Less, but <em>lovelier.</em></p>
+        <p>Objects with a point of view.<br />Made to live with, and love for a long time.</p>
+        <span class="intro-star" aria-hidden="true">✳</span>
+      </section>
+
+      <section class="shop-section" id="shop">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow"><span class="eyebrow-line"></span> The good stuff</p>
+            <h2>Everyday, <em>elevated.</em></h2>
+          </div>
+          <p class="section-aside">A considered collection for the<br />corners you call your own.</p>
+        </div>
+
+        <div class="shop-toolbar">
+          <div class="category-filters" role="group" aria-label="Filter products by category">
+            <button class="filter-chip is-active" type="button" data-category="All" aria-pressed="true">All things <span>08</span></button>
+            <button class="filter-chip" type="button" data-category="Home" aria-pressed="false">Home</button>
+            <button class="filter-chip" type="button" data-category="Objects" aria-pressed="false">Objects</button>
+            <button class="filter-chip" type="button" data-category="Rituals" aria-pressed="false">Rituals</button>
+          </div>
+          <label class="search-field" hidden>
+            <span class="visually-hidden">Search products</span>
+            <input type="search" placeholder="Find something lovely..." autocomplete="off" />
+            <button class="clear-search" type="button" aria-label="Close search">×</button>
+          </label>
+          <p class="results-count" aria-live="polite">Showing <span>8</span> good things</p>
+        </div>
+
+        <div class="product-grid" aria-live="polite"></div>
+        <p class="empty-state" hidden>No good things found. Try another search.</p>
+        <div class="shop-footer">
+          <span>TAKE YOUR TIME. FIND YOUR THING.</span>
+          <span>01 — 08</span>
+        </div>
+      </section>
+
+      <section class="quote-section">
+        <span class="quote-mark" aria-hidden="true">“</span>
+        <blockquote>“The small things are<br />the <em>big things.</em>”</blockquote>
+        <p>A NOTE FROM OUR FOUNDER</p>
+      </section>
+
+      <section class="newsletter">
+        <div class="newsletter-copy">
+          <p class="eyebrow light-eyebrow"><span class="eyebrow-line"></span> A Sipra kind of note</p>
+          <h2>A little more<br /><em>lovely in your inbox.</em></h2>
+        </div>
+        <form class="newsletter-form">
+          <label for="newsletter-email">Good things, thoughtful notes, and 10% off your first order.</label>
+          <div class="email-entry">
+            <input id="newsletter-email" type="email" placeholder="Your email address" required />
+            <button type="submit" aria-label="Subscribe to newsletter">↗</button>
+          </div>
+          <p class="newsletter-feedback" aria-live="polite"></p>
+        </form>
+        <span class="newsletter-sun" aria-hidden="true">☼</span>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <a class="wordmark footer-wordmark" href="#" aria-label="Sipra Mart home">sipra<span class="wordmark-second"> mart</span><span class="wordmark-mark">®</span></a>
+      <p>Good things for the everyday.<br />Made to stay a little longer.</p>
+      <div class="footer-links">
+        <a href="#shop">Shop</a>
+        <a href="#story">Our story</a>
+        <a href="mailto:hello@sipramart.example">Say hello</a>
+      </div>
+      <span class="copyright">© 2026 SIPRA MART.</span>
+    </footer>
+
+    <div class="drawer-backdrop" hidden></div>
+    <aside class="cart-drawer" aria-label="Shopping bag" aria-hidden="true">
+      <div class="drawer-header">
+        <div><p class="eyebrow"><span class="eyebrow-line"></span> Your good things</p><h2>Your bag <span class="drawer-count">(0)</span></h2></div>
+        <button class="drawer-close icon-button" type="button" aria-label="Close shopping bag">×</button>
+      </div>
+      <div class="cart-items"></div>
+      <div class="cart-empty"><span aria-hidden="true">✳</span><p>Your bag is taking a slow day.</p><button class="continue-shopping" type="button">Find something lovely</button></div>
+      <div class="drawer-footer" hidden>
+        <div class="subtotal-row"><span>Subtotal</span><strong class="cart-subtotal">$0</strong></div>
+        <p>Shipping and any applicable taxes are calculated at checkout.</p>
+        <button class="checkout-button" type="button">On to the good part <span>↗</span></button>
+        <span class="secure-note">A LITTLE LOVE, PACKED WITH CARE</span>
+      </div>
+    </aside>
+    <div class="toast" role="status" aria-live="polite"></div>
+  </body>
+</html>
