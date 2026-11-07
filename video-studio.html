@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#f5f4ef">
+    <meta name="description" content="Watch and download the Four in a Row gameplay demo video.">
+    <title>Demo video — Four in a Row</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+      :root {
+        color-scheme: light;
+        --paper: #f5f4ef;
+        --ink: #17211d;
+        --muted: #78817b;
+        --green: #164b3b;
+        font-family: "DM Sans", sans-serif;
+        font-synthesis: none;
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        min-width: 320px;
+        min-height: 100vh;
+        margin: 0;
+        color: var(--ink);
+        background: var(--paper);
+      }
+
+      main {
+        width: min(940px, calc(100% - 40px));
+        margin: 0 auto;
+        padding: 44px 0 60px;
+      }
+
+      a { color: var(--green); text-decoration: none; }
+
+      .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 600;
+      }
+
+      h1 {
+        margin: 26px 0 8px;
+        font: 600 clamp(34px, 5vw, 48px)/1.1 "Space Grotesk", sans-serif;
+        letter-spacing: -2px;
+      }
+
+      .description {
+        margin: 0 0 24px;
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.7;
+      }
+
+      .video-frame {
+        overflow: hidden;
+        border: 1px solid #e3e3da;
+        border-radius: 16px;
+        background: #e8e7df;
+        box-shadow: 0 18px 46px rgb(23 33 29 / 9%);
+      }
+
+      video {
+        display: block;
+        width: 100%;
+        height: auto;
+      }
+
+      .video-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin: 18px 0 34px;
+      }
+
+      .action-button {
+        min-height: 42px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 16px;
+        border: 1px solid #dfe3dc;
+        border-radius: 8px;
+        color: var(--green);
+        background: #e8eee8;
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+      .action-button.primary {
+        border-color: var(--green);
+        color: white;
+        background: var(--green);
+      }
+
+      h2 {
+        margin: 0 0 8px;
+        font: 600 22px "Space Grotesk", sans-serif;
+      }
+
+      .caption-hint,
+      .copy-status {
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .caption {
+        margin: 14px 0;
+        padding: 18px;
+        border: 1px solid #e5e4dc;
+        border-radius: 10px;
+        background: rgb(255 255 255 / 54%);
+        font-size: 13px;
+        line-height: 1.8;
+        white-space: pre-wrap;
+      }
+
+      @media (max-width: 560px) {
+        main { padding-top: 30px; }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <a class="back-link" href="index.html">← Back to the game</a>
+      <h1>Meet Four in a Row.</h1>
+      <p class="description">A quick look at the game, made as a separate video for sharing.</p>
+      <div class="video-frame">
+        <video controls playsinline preload="metadata" aria-label="Four in a Row gameplay demo">
+          <source src="four-in-a-row-demo.mp4" type="video/mp4">
+          Your browser can't play this video. Use the download link below.
+        </video>
+      </div>
+      <div class="video-actions">
+        <a class="action-button primary" href="four-in-a-row-demo.mp4" download>Download the 12-second video</a>
+        <a class="action-button" href="index.html">Play the game</a>
+      </div>
+
+      <section aria-labelledby="linkedin-heading">
+        <h2 id="linkedin-heading">LinkedIn post</h2>
+        <p class="caption-hint">Copy this caption, add the video, then tag the official InternPe page when you publish.</p>
+        <p class="caption" id="caption">I built a Connect Four game with HTML, CSS, and JavaScript for my web development task with @InternPe! 🎮
+
+Play against the computer or challenge a friend. The game features a responsive layout, animated moves, keyboard controls, match scoring, and a computer opponent.
+
+Would love your feedback!
+
+#InternPe #WebDevelopment #JavaScript #FrontendDevelopment</p>
+        <button class="action-button" id="copy-caption" type="button">Copy caption</button>
+        <span class="copy-status" id="copy-status" role="status" aria-live="polite"></span>
+      </section>
+    </main>
+    <script>
+      const copyButton = document.querySelector("#copy-caption");
+      const caption = document.querySelector("#caption");
+      const status = document.querySelector("#copy-status");
+
+      copyButton.addEventListener("click", async () => {
+        try {
+          await navigator.clipboard.writeText(caption.textContent);
+          status.textContent = "Caption copied.";
+        } catch (error) {
+          status.textContent = "Clipboard access was blocked. Select and copy the caption above.";
+        }
+      });
+    </script>
+  </body>
+</html>
