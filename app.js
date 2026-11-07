@@ -1,264 +1,222 @@
-const products = [
-  {
-    id: "linen-throw",
-    name: "The Sipra Linen Throw",
-    category: "Home",
-    price: 88,
-    badge: "Bestseller",
-    image: "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=900&q=80",
-    alt: "Soft neutral linen throw draped across a warm, sunlit sofa",
-  },
-  {
-    id: "stoneware-mug",
-    name: "Slow Morning Mug",
-    category: "Rituals",
-    price: 32,
-    badge: "Made by hand",
-    image: "https://images.unsplash.com/photo-1514228742587-6b1558fcca3d?auto=format&fit=crop&w=900&q=80",
-    alt: "Handmade ceramic mug in a warm, natural glaze",
-  },
-  {
-    id: "everyday-vase",
-    name: "Everyday Object No. 04",
-    category: "Objects",
-    price: 64,
-    badge: "",
-    image: "https://images.unsplash.com/photo-1578500494198-246f612d3b3d?auto=format&fit=crop&w=900&q=80",
-    alt: "Sculptural ceramic vase with understated organic lines",
-  },
-  {
-    id: "linen-cushion",
-    name: "The Sipra Cushion",
-    category: "Home",
-    price: 56,
-    badge: "Nearly gone",
-    image: "https://images.unsplash.com/photo-1584100936595-c0654b55a2e2?auto=format&fit=crop&w=900&q=80",
-    alt: "Textured neutral cushion on a comfortable lounge chair",
-  },
-  {
-    id: "incense-set",
-    name: "A Quiet Moment Incense",
-    category: "Rituals",
-    price: 28,
-    badge: "A daily ritual",
-    image: "https://images.unsplash.com/photo-1603006905003-be475563bc59?auto=format&fit=crop&w=900&q=80",
-    alt: "A calming incense ritual with natural botanicals",
-  },
-  {
-    id: "ceramic-bowl",
-    name: "Sipra Ceramic Bowl",
-    category: "Objects",
-    price: 42,
-    badge: "",
-    image: "https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?auto=format&fit=crop&w=900&q=80",
-    alt: "Hand-finished ceramic bowl in a softly speckled glaze",
-  },
-  {
-    id: "table-lamp",
-    name: "The Golden Hour Lamp",
-    category: "Home",
-    price: 124,
-    badge: "Just landed",
-    image: "https://images.unsplash.com/photo-1507473885765-e6ed057f782c?auto=format&fit=crop&w=900&q=80",
-    alt: "Warm sculptural table lamp casting a gentle evening glow",
-  },
-  {
-    id: "daily-journal",
-    name: "A Little Daily Journal",
-    category: "Rituals",
-    price: 24,
-    badge: "",
-    image: "https://images.unsplash.com/photo-1517842645767-c639042777db?auto=format&fit=crop&w=900&q=80",
-    alt: "Open notebook ready for a quiet moment of writing",
-  },
-];
+"use strict";
 
-const productGrid = document.querySelector(".product-grid");
-const cart = new Map();
-let activeCategory = "All";
-let searchQuery = "";
-let toastTimeout;
+const STORAGE_KEY = "daylight.tasks.v1";
+const taskList = document.querySelector("#task-list");
+const emptyState = document.querySelector("#empty-state");
+const addForm = document.querySelector("#add-form");
+const taskInput = document.querySelector("#task-input");
+const priorityInput = document.querySelector("#task-priority");
+const clearCompletedButton = document.querySelector("#clear-completed");
+const visibleCount = document.querySelector("#visible-count");
+const progressPercent = document.querySelector("#progress-percent");
+const progressFill = document.querySelector("#progress-fill");
+const progressTrack = document.querySelector("#progress-track");
+const progressMessage = document.querySelector("#progress-message");
 
-productGrid.addEventListener("error", (event) => {
-  if (event.target instanceof HTMLImageElement) {
-    event.target.alt = "Product image unavailable";
-    event.target.style.visibility = "hidden";
-  }
-}, true);
+let tasks = loadTasks();
+let activeFilter = "all";
 
-const formatPrice = (amount) => `$${amount.toFixed(2)}`;
+function loadTasks() {
+  try {
+    const savedTasks = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+    if (!Array.isArray(savedTasks)) return [];
 
-function renderProducts() {
-  const visibleProducts = products.filter((product) => {
-    const matchesCategory = activeCategory === "All" || product.category === activeCategory;
-    const matchesSearch = `${product.name} ${product.category}`.toLowerCase().includes(searchQuery);
-    return matchesCategory && matchesSearch;
-  });
-
-  productGrid.innerHTML = visibleProducts.map((product) => `
-    <article class="product-card">
-      <div class="product-image-wrap">
-        <img class="product-image" src="${product.image}" alt="${product.alt}" loading="lazy" />
-        ${product.badge ? `<span class="product-badge">${product.badge}</span>` : ""}
-        <button class="add-button" type="button" data-add="${product.id}" aria-label="Add ${product.name} to bag">+</button>
-      </div>
-      <div class="product-info">
-        <div>
-          <h3 class="product-title">${product.name}</h3>
-          <p class="product-category">${product.category}</p>
-        </div>
-        <p class="product-price">${formatPrice(product.price)}</p>
-      </div>
-    </article>
-  `).join("");
-
-  document.querySelector(".results-count span").textContent = visibleProducts.length;
-  document.querySelector(".empty-state").hidden = visibleProducts.length !== 0;
-  productGrid.hidden = visibleProducts.length === 0;
-}
-
-function renderCart() {
-  const itemCount = [...cart.values()].reduce((sum, item) => sum + item.quantity, 0);
-  const subtotal = [...cart.values()].reduce((sum, item) => sum + item.product.price * item.quantity, 0);
-  document.querySelector(".cart-count").textContent = itemCount;
-  document.querySelector(".drawer-count").textContent = `(${itemCount})`;
-  document.querySelector(".cart-subtotal").textContent = formatPrice(subtotal);
-  document.querySelector(".cart-empty").hidden = itemCount !== 0;
-  document.querySelector(".drawer-footer").hidden = itemCount === 0;
-  document.querySelector(".cart-items").innerHTML = [...cart.entries()].map(([id, item]) => `
-    <div class="cart-item">
-      <img src="${item.product.image}" alt="${item.product.alt}" />
-      <div class="cart-item-info">
-        <strong>${item.product.name}</strong>
-        <span>${formatPrice(item.product.price)}</span>
-        <div class="quantity-control" aria-label="Quantity for ${item.product.name}">
-          <button type="button" data-quantity="${id}" data-change="-1" aria-label="Decrease quantity">−</button>
-          <span>${item.quantity}</span>
-          <button type="button" data-quantity="${id}" data-change="1" aria-label="Increase quantity">+</button>
-        </div>
-        <button class="remove-item" type="button" data-remove="${id}">Remove</button>
-      </div>
-      <span class="cart-item-price">${formatPrice(item.product.price * item.quantity)}</span>
-    </div>
-  `).join("");
-}
-
-function showToast(message) {
-  const toast = document.querySelector(".toast");
-  toast.textContent = message;
-  toast.classList.add("is-visible");
-  window.clearTimeout(toastTimeout);
-  toastTimeout = window.setTimeout(() => toast.classList.remove("is-visible"), 2200);
-}
-
-function setCartOpen(isOpen) {
-  const drawer = document.querySelector(".cart-drawer");
-  const backdrop = document.querySelector(".drawer-backdrop");
-  drawer.classList.toggle("is-open", isOpen);
-  drawer.setAttribute("aria-hidden", String(!isOpen));
-  document.body.classList.toggle("body-locked", isOpen);
-  backdrop.hidden = !isOpen;
-  if (isOpen) {
-    requestAnimationFrame(() => backdrop.classList.add("is-visible"));
-    document.querySelector(".drawer-close").focus();
-  } else {
-    backdrop.classList.remove("is-visible");
+    return savedTasks.filter(
+      (task) =>
+        task &&
+        typeof task.id === "string" &&
+        typeof task.text === "string" &&
+        typeof task.completed === "boolean" &&
+        (task.priority === "high" || task.priority === "normal") &&
+        typeof task.createdAt === "string"
+    );
+  } catch (error) {
+    console.error("Could not load saved tasks.", error);
+    return [];
   }
 }
 
-document.querySelector(".category-filters").addEventListener("click", (event) => {
-  const button = event.target.closest("[data-category]");
-  if (!button) return;
-  activeCategory = button.dataset.category;
-  document.querySelectorAll(".filter-chip").forEach((chip) => {
-    const isActive = chip === button;
-    chip.classList.toggle("is-active", isActive);
-    chip.setAttribute("aria-pressed", String(isActive));
-  });
-  renderProducts();
-});
+function saveTasks() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+  } catch (error) {
+    console.error("Could not save tasks to this browser.", error);
+    progressMessage.textContent = "Your changes couldn't be saved in this browser.";
+  }
+}
 
-document.querySelector(".main-nav").addEventListener("click", (event) => {
-  const link = event.target.closest("[data-nav-category]");
-  if (!link) return;
+function formatTaskDate(dateString) {
+  return new Intl.DateTimeFormat(undefined, {
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+  }).format(new Date(dateString));
+}
+
+function getVisibleTasks() {
+  if (activeFilter === "active") return tasks.filter((task) => !task.completed);
+  if (activeFilter === "completed") return tasks.filter((task) => task.completed);
+  if (activeFilter === "today") {
+    const today = new Date().toDateString();
+    return tasks.filter((task) => new Date(task.createdAt).toDateString() === today);
+  }
+  return tasks;
+}
+
+function makeTaskElement(task) {
+  const item = document.createElement("li");
+  item.className = `task-item${task.completed ? " is-completed" : ""}`;
+  item.dataset.taskId = task.id;
+
+  const toggle = document.createElement("button");
+  toggle.className = "task-toggle";
+  toggle.type = "button";
+  toggle.setAttribute("aria-label", task.completed ? "Mark task as in progress" : "Mark task as completed");
+  toggle.setAttribute("aria-pressed", String(task.completed));
+  toggle.textContent = task.completed ? "✓" : "";
+
+  const copy = document.createElement("div");
+  copy.className = "task-copy";
+
+  const name = document.createElement("div");
+  name.className = "task-name";
+  name.textContent = task.text;
+  copy.append(name);
+
+  const meta = document.createElement("div");
+  meta.className = "task-meta";
+  const date = document.createElement("time");
+  date.className = "task-date";
+  date.dateTime = task.createdAt;
+  date.textContent = formatTaskDate(task.createdAt);
+  meta.append(date);
+
+  if (task.priority === "high") {
+    const badge = document.createElement("span");
+    badge.className = "priority-badge";
+    badge.textContent = "IMPORTANT";
+    meta.append(badge);
+  }
+
+  copy.append(meta);
+
+  const remove = document.createElement("button");
+  remove.className = "task-delete";
+  remove.type = "button";
+  remove.setAttribute("aria-label", `Delete task: ${task.text}`);
+  remove.textContent = "×";
+
+  item.append(toggle, copy, remove);
+  return item;
+}
+
+function render() {
+  const visibleTasks = getVisibleTasks();
+  const completedTasks = tasks.filter((task) => task.completed).length;
+  const percent = tasks.length ? Math.round((completedTasks / tasks.length) * 100) : 0;
+
+  taskList.replaceChildren(...visibleTasks.map(makeTaskElement));
+  emptyState.classList.toggle("is-visible", visibleTasks.length === 0);
+  visibleCount.textContent = String(visibleTasks.length);
+  progressPercent.textContent = String(percent);
+  progressFill.style.width = `${percent}%`;
+  progressTrack.setAttribute("aria-valuenow", String(percent));
+  progressMessage.textContent =
+    tasks.length === 0
+      ? "Every small step counts."
+      : completedTasks === tasks.length
+        ? "Look at you go. Everything is done!"
+        : `${completedTasks} of ${tasks.length} ${tasks.length === 1 ? "task" : "tasks"} complete.`;
+
+  document.querySelector("#all-count").textContent = String(tasks.length);
+  document.querySelector("#today-count").textContent = String(
+    tasks.filter((task) => new Date(task.createdAt).toDateString() === new Date().toDateString()).length
+  );
+  document.querySelector("#completed-count").textContent = String(completedTasks);
+  clearCompletedButton.hidden = completedTasks === 0;
+}
+
+function setFilter(filter) {
+  activeFilter = filter;
+
+  document.querySelectorAll(".filter-chip").forEach((button) => {
+    const selected = button.dataset.filter === filter;
+    button.classList.toggle("is-selected", selected);
+    button.setAttribute("aria-pressed", String(selected));
+  });
+
+  document.querySelectorAll(".nav-item").forEach((button) => {
+    button.classList.toggle("is-active", button.dataset.filter === filter);
+  });
+
+  const headings = {
+    all: "Your tasks",
+    today: "Today's tasks",
+    active: "In progress",
+    completed: "Completed tasks",
+  };
+  document.querySelector("#tasks-heading").textContent = headings[filter] || "Your tasks";
+  render();
+}
+
+addForm.addEventListener("submit", (event) => {
   event.preventDefault();
-  activeCategory = link.dataset.navCategory;
-  document.querySelector(`.filter-chip[data-category="${activeCategory}"]`).click();
-  document.querySelector(".main-nav").classList.remove("is-open");
-  document.querySelector(".menu-toggle").setAttribute("aria-expanded", "false");
-  document.querySelector("#shop").scrollIntoView({ behavior: "smooth" });
+  const text = taskInput.value.trim();
+  if (!text) {
+    taskInput.focus();
+    return;
+  }
+
+  tasks.unshift({
+    id: crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(36).slice(2)}`,
+    text,
+    completed: false,
+    priority: priorityInput.value,
+    createdAt: new Date().toISOString(),
+  });
+
+  saveTasks();
+  taskInput.value = "";
+  priorityInput.value = "normal";
+  setFilter("all");
+  taskInput.focus();
 });
 
-productGrid.addEventListener("click", (event) => {
-  const button = event.target.closest("[data-add]");
-  if (!button) return;
-  const product = products.find((item) => item.id === button.dataset.add);
-  const item = cart.get(product.id);
-  cart.set(product.id, { product, quantity: (item?.quantity ?? 0) + 1 });
-  renderCart();
-  showToast(`${product.name} added to your bag`);
+document.querySelectorAll("[data-filter]").forEach((button) => {
+  button.addEventListener("click", () => setFilter(button.dataset.filter));
 });
 
-document.querySelector(".cart-items").addEventListener("click", (event) => {
-  const quantityButton = event.target.closest("[data-quantity]");
-  const removeButton = event.target.closest("[data-remove]");
-  if (removeButton) {
-    cart.delete(removeButton.dataset.remove);
-  } else if (quantityButton) {
-    const item = cart.get(quantityButton.dataset.quantity);
-    const quantity = item.quantity + Number(quantityButton.dataset.change);
-    if (quantity === 0) cart.delete(quantityButton.dataset.quantity);
-    else cart.set(quantityButton.dataset.quantity, { ...item, quantity });
+taskList.addEventListener("click", (event) => {
+  const button = event.target.closest("button");
+  const item = button?.closest(".task-item");
+  if (!button || !item) return;
+
+  const task = tasks.find((candidate) => candidate.id === item.dataset.taskId);
+  if (!task) return;
+
+  if (button.classList.contains("task-toggle")) {
+    task.completed = !task.completed;
+  } else if (button.classList.contains("task-delete")) {
+    tasks = tasks.filter((candidate) => candidate.id !== task.id);
   } else {
     return;
   }
-  renderCart();
+
+  saveTasks();
+  render();
 });
 
-document.querySelector(".cart-button").addEventListener("click", () => setCartOpen(true));
-document.querySelector(".drawer-close").addEventListener("click", () => setCartOpen(false));
-document.querySelector(".continue-shopping").addEventListener("click", () => setCartOpen(false));
-document.querySelector(".drawer-backdrop").addEventListener("click", () => setCartOpen(false));
-document.addEventListener("keydown", (event) => {
-  if (event.key === "Escape") setCartOpen(false);
+clearCompletedButton.addEventListener("click", () => {
+  tasks = tasks.filter((task) => !task.completed);
+  saveTasks();
+  render();
 });
 
-const searchField = document.querySelector(".search-field");
-document.querySelector(".search-toggle").addEventListener("click", () => {
-  searchField.hidden = !searchField.hidden;
-  if (!searchField.hidden) searchField.querySelector("input").focus();
-});
-searchField.querySelector("input").addEventListener("input", (event) => {
-  searchQuery = event.target.value.trim().toLowerCase();
-  renderProducts();
-});
-document.querySelector(".clear-search").addEventListener("click", () => {
-  searchQuery = "";
-  searchField.querySelector("input").value = "";
-  searchField.hidden = true;
-  renderProducts();
-});
+document.querySelector("#today-date").textContent = new Intl.DateTimeFormat(undefined, {
+  weekday: "short",
+  month: "short",
+  day: "numeric",
+}).format(new Date());
 
-document.querySelector(".menu-toggle").addEventListener("click", (event) => {
-  const menu = document.querySelector(".main-nav");
-  const isOpen = menu.classList.toggle("is-open");
-  event.currentTarget.setAttribute("aria-expanded", String(isOpen));
-});
-
-document.querySelector(".checkout-button").addEventListener("click", () => {
-  showToast("Thanks for stopping by — checkout is a demo.");
-});
-
-document.querySelector(".newsletter-form").addEventListener("submit", (event) => {
-  event.preventDefault();
-  const email = document.querySelector("#newsletter-email");
-  if (!email.checkValidity()) {
-    email.reportValidity();
-    return;
-  }
-  document.querySelector(".newsletter-feedback").textContent = "You're on the list. Keep an eye on your inbox.";
-  event.currentTarget.reset();
-});
-
-renderProducts();
-renderCart();
+render();

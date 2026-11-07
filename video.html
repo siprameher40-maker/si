@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f7f6f2" />
+    <title>sipra TO-Do list — Demo video</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="video.js" defer></script>
+    <style>
+      .video-page {
+        width: min(100% - 36px, 720px);
+        margin: 0 auto;
+        padding: 34px 0 42px;
+      }
+
+      .video-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 24px;
+      }
+
+      .video-header .brand {
+        margin: 0;
+        font-size: 16px;
+      }
+
+      .video-label {
+        color: #858a80;
+        font-size: 11px;
+      }
+
+      .video-card {
+        padding: 20px;
+        border: 1px solid #eeede7;
+        border-radius: 12px;
+        background: #fff;
+        box-shadow: 0 8px 34px rgba(58, 60, 49, 0.045);
+      }
+
+      .video-canvas {
+        display: block;
+        width: min(100%, 432px);
+        height: auto;
+        margin: 0 auto;
+        border-radius: 6px;
+        background: #f7f6f2;
+      }
+
+      .video-controls {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin: 17px auto 0;
+        max-width: 432px;
+      }
+
+      .video-controls p {
+        margin: 0;
+        color: #858a80;
+        font-size: 11px;
+      }
+
+      .video-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .video-action {
+        min-height: 36px;
+        padding: 0 13px;
+        border: 1px solid #e6e7df;
+        border-radius: 7px;
+        background: white;
+        color: #5e655c;
+        cursor: pointer;
+        font-size: 11px;
+        font-weight: 600;
+        text-decoration: none;
+      }
+
+      .video-action.primary {
+        border-color: var(--green);
+        background: var(--green);
+        color: white;
+      }
+
+      .video-action:disabled {
+        cursor: wait;
+        opacity: 0.65;
+      }
+
+      .video-status {
+        min-height: 18px;
+        margin: 12px auto 0;
+        max-width: 432px;
+        color: #858a80;
+        font-size: 11px;
+      }
+
+      .video-preview {
+        display: block;
+        width: min(100%, 432px);
+        max-height: 360px;
+        margin: 14px auto 0;
+        border-radius: 6px;
+        background: #252925;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="video-page">
+      <header class="video-header">
+        <a class="brand" href="index.html" aria-label="sipra TO-Do list home">
+          <span class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 32 32" fill="none">
+              <path d="M16 5v4M16 23v4M5 16h4m14 0h4M8.2 8.2l2.8 2.8m10 10 2.8 2.8m0-15.6L21 11m-10 10-2.8 2.8" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+              <circle cx="16" cy="16" r="5" fill="currentColor"/>
+            </svg>
+          </span>
+          <span>sipra <span class="brand-accent">TO-Do list</span></span>
+        </a>
+        <span class="video-label">A little look around</span>
+      </header>
+
+      <section class="video-card" aria-label="sipra TO-Do list product demo video">
+        <canvas class="video-canvas" id="video-canvas" width="1080" height="1350">
+          Your browser does not support canvas.
+        </canvas>
+        <div class="video-controls">
+          <p>1080 × 1350 · 12-second demo</p>
+          <div class="video-actions">
+            <button class="video-action" id="replay-button" type="button">Preview again</button>
+            <button class="video-action primary" id="record-button" type="button">Create video</button>
+            <a class="video-action" id="download-link" hidden>Download video</a>
+          </div>
+        </div>
+        <p class="video-status" id="video-status" role="status" aria-live="polite"></p>
+        <video class="video-preview" id="video-preview" controls playsinline hidden></video>
+      </section>
+    </main>
+  </body>
+</html>
